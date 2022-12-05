@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\View;
 
 class AccessControlController extends Controller
 {
+
     public function index(AccessControlDataTable $dataTable)
     {
         return $dataTable->render('admin.accessControl.index');
