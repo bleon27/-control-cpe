@@ -21,7 +21,6 @@ class ItemAccessUserController extends Controller
 
     public function create(TempItemsAccessUsersDataTable $dataTable)
     {
-        //->ajax(route('itemsAccessUser.create', $accessUser))
         return view('admin.itemAccessUser.create');
     }
 
@@ -58,9 +57,9 @@ class ItemAccessUserController extends Controller
         $tableItemp = $item->getTable();
         $tableTemp = $itemTemp->getTable();
         $itemTemp = $itemTemp->join($tableItemp, "$tableItemp.id", "$tableTemp.item_id")
-                ->where('access_user_id', $accessUser)
-                ->select(["$tableTemp.id", 'name', 'brand', 'model', 'serie', 'cne_code', 'processor', 'ram', 'disk', 'state'])
-        ->newQuery();
+            ->where('access_user_id', $accessUser)
+            ->select(["$tableTemp.id", 'name', 'brand', 'model', 'serie', 'cne_code', 'processor', 'ram', 'disk', 'state'])
+            ->newQuery();
 
         return DataTables::eloquent($itemTemp)
             ->addColumn('actions', function ($itemTemp) {
@@ -74,19 +73,6 @@ class ItemAccessUserController extends Controller
             ->setRowId('id')
             ->rawColumns(['actions'])
             ->toJson();
-
-
-
-/*
-            ->addColumn('actions', function ($item) {
-                $str = "<button class='btn btn-success btn-sm btn-assign'";
-                $str .= "title='Asignar'><i class='fa-solid fa-plus'></i></button>";
-                return $str;
-            })
-            ->setRowId('id')
-            ->setRowAttr(['data-id' => '{{$id}}'])
-            ->rawColumns(['actions'])
-            ->toJson();*/
     }
 
     /*public function store(StoreItemUsersRequest $request)
