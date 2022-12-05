@@ -2,7 +2,7 @@
 
 @push('styles')
     <style>
-        #createUser label {
+        .col-form-label {
             width: 200px
         }
     </style>
