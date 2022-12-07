@@ -21,7 +21,6 @@ class UpdateUserRequest extends FormRequest
             'ci' => ['required', 'digits:10', Rule::unique('users')->ignore($this->user)],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($this->user)],
             'unit' => ['required', 'string', 'max:255'],
-            'role_id' => ['required', 'integer', 'min:1', Rule::exists('App\Models\Role', 'id')],
             'position' => ['required', 'string', 'max:255'],
         ];
     }
@@ -37,7 +36,6 @@ class UpdateUserRequest extends FormRequest
                 'ci' => trim($this->cedula),
                 'unit' => trim($this->unidad),
                 'position' => trim($this->cargo),
-                'role_id' => trim($this->rol),
             ]
         );
     }
@@ -50,7 +48,6 @@ class UpdateUserRequest extends FormRequest
             'ci' => 'Cédula',
             'unit' => 'Unidad',
             'position' => 'Cargo',
-            'role_id' => 'Rol',
         ];
     }
 }

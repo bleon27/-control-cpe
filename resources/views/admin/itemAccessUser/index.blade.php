@@ -82,15 +82,16 @@
             }
         }
 
-        var items_table;
+        var itemUsers_table;
         const usarDatatable = () => {
-            items_table = window.LaravelDataTables["items-table"];
-            //btnEliminarItem();
+            itemUsers_table = window.LaravelDataTables["itemusers-table"];
+            console.log('sdfds')
+            btnEliminarItem('{{ csrf_token() }}');
             //btnAsignItem();
         }
 
         const btnEliminarItem = (_token) => {
-            items_table.on('click', '.delete-item', function (e){
+            itemUsers_table.on('click', '.delete-item', function (e){
                 e.preventDefault();
                 e.stopPropagation();
                 var fromThis = $(this);
@@ -103,7 +104,7 @@
                     denyButtonText: `No`,
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        eliminarItem(fromThis, '{{ csrf_token() }}');
+                        eliminarItem(fromThis, _token);
                     }
                 });
             });
@@ -121,7 +122,7 @@
                     insertBlockUI();
                 },
                 success: function (json) {
-                    items_table.ajax.reload();
+                    itemUsers_table.ajax.reload();
                     messageAccessControl('success', json.message);
                 },
                 error: function (xhr, status) {
@@ -145,7 +146,7 @@
         }
 
         const btnAsignItem = () =>{
-            items_table.on('click', '.btn-assign', function (e){
+            itemUsers_table.on('click', '.btn-assign', function (e){
                 e.preventDefault();
                 e.stopPropagation();
                 var btnThis = $(this);
@@ -177,7 +178,7 @@
                     insertBlockUI();
                 },
                 success: function (json) {
-                    items_table.ajax.reload();
+                    itemUsers_table.ajax.reload();
                     messageAccessControl('success', json.message);
                 },
                 error: function (xhr, status) {
@@ -208,7 +209,7 @@
                 url: url,
                 type: 'GET',
                 success: function (json) {
-                    items_table.ajax.reload();
+                    itemUsers_table.ajax.reload();
                 },
                 error: function (xhr, status) {
                     var errors = $.parseJSON(xhr.responseText);

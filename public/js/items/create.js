@@ -13,6 +13,7 @@ $(function () {
             success: function (json) {
                 json.message
                 messageAccessControl('success', json.message);
+                fromThis.trigger("reset");
             },
             error: function (xhr, status) {
                 var errors = $.parseJSON(xhr.responseText);
@@ -29,7 +30,6 @@ $(function () {
                 messageAccessControl('error', 'Error', textErrores, null, 5000);
             },
             complete: function (xhr, status) {
-                //fromThis.trigger("reset");
                 $.unblockUI()
             }
         });
@@ -56,6 +56,7 @@ $(function () {
             },
             success: function (json) {
                 messageAccessControl('success', 'Ítems registrados con éxito');
+                fromThis.trigger("reset");
             },
             error: function (xhr, status) {
                 var errors = $.parseJSON(xhr.responseText);
@@ -73,7 +74,6 @@ $(function () {
             },
             complete: function (xhr, status) {
                 $.unblockUI()
-                FfromThis.trigger("reset");
             }
         });
     });

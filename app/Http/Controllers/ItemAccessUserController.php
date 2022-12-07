@@ -4,16 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\TempItemAccessUser;
+use App\Models\ItemAccessUser;
+use App\Models\ItemAccessUserDetail;
 use App\DataTables\ItemAccessUsersDataTable;
 use App\DataTables\TempItemsAccessUsersDataTable;
 use App\Http\Requests\StoreItemUsersRequest;
 use App\Http\Requests\UpdateItemUsersRequest;
+use Barryvdh\Snappy\Facades\SnappyPdf;
+use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use URL;
+use DB;
 use DataTables;
+use Carbon\Carbon;
 
 class ItemAccessUserController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:item-access-list|item-access-create|item-access-edit|item-access-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:item-access-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:item-access-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:item-access-delete', ['only' => ['destroy']]);
+    }
+
     public function index(ItemAccessUsersDataTable $dataTable)
     {
         return $dataTable->render('admin.itemAccessUser.index');
@@ -58,7 +72,7 @@ class ItemAccessUserController extends Controller
         $tableTemp = $itemTemp->getTable();
         $itemTemp = $itemTemp->join($tableItemp, "$tableItemp.id", "$tableTemp.item_id")
             ->where('access_user_id', $accessUser)
-            ->select(["$tableTemp.id", 'name', 'brand', 'model', 'serie', 'cne_code', 'processor', 'ram', 'disk', 'state'])
+            ->select(["$tableTemp.id", 'name', 'brand', 'model', 'serie', 'cne_code', 'processor', 'ram', 'disk', 'state', "$tableTemp.amount"])
             ->newQuery();
 
         return DataTables::eloquent($itemTemp)
@@ -75,23 +89,88 @@ class ItemAccessUserController extends Controller
             ->toJson();
     }
 
-    /*public function store(StoreItemUsersRequest $request)
+    public function store(StoreItemUsersRequest $request)
     {
-    if (request()->ajax()) {
-    $item = Item::create($request->validated());
-    return response()->json(['message' => 'Item registrado con éxito']);
-    }
-    }*/
+        if (request()->ajax()) {
+            $items = new Item;
+            $itemsTable = $items->getTable();
+            $tempItemAccessUser = new TempItemAccessUser;
+            $tempItemAccessUserTable = $tempItemAccessUser->getTable();
+            $tempItemAccessUser = $tempItemAccessUser->where('user_id', auth()->user()->id)
+                ->where('access_user_id', $request->access_user_id)->first();
 
-    public function show(Item $item)
+            $tempStore = $tempItemAccessUser->join("$itemsTable", "$tempItemAccessUserTable.item_id", "$itemsTable.id")
+                ->select(["$tempItemAccessUserTable.amount", 'user_id', 'item_id',
+                'access_user_id', 'name', 'brand', 'model', 'serie',
+                'cne_code', 'processor', 'ram', 'disk', 'state'])
+                ->get();
+
+            DB::transaction(function () use ($request, $tempStore, $tempItemAccessUser) {
+
+                $itemAccess = ItemAccessUser::create([
+                    'status' => '',
+                    'access_user_id' => $request->access_user_id,
+                    'observation' => $request->observation,
+                    'user_id' => auth()->user()->id,
+                    'assigned_at' => Carbon::now(),
+                ]);
+
+                foreach ($tempStore as $key => $value) {
+                    $itemAccessDetail = ItemAccessUserDetail::create([
+                        'name' => $value->name,
+                        'brand' => $value->brand,
+                        'model' => $value->model,
+                        'serie' => $value->serie,
+                        'cne_code' => $value->cne_code,
+                        'processor' => $value->processor,
+                        'ram' => $value->ram,
+                        'disk' => $value->disk,
+                        'type' => $value->type,
+                        'amount' => $value->amount,
+                        'state' => $value->state,
+                        'item_id' => $value->item_id,
+                        'item_access_user_id' => $itemAccess->id,
+                    ]);
+                }
+
+                $tempItemAccessUser->delete();
+
+                return response()->json(['message' => 'Asignación Exitosa']);
+            }, 5);
+        }
+        return response()->json(['message' => 'Acceso denegado']);
+    }
+
+    public function show(ItemAccessUser $item)
     {
         //
     }
 
-    public function edit(Item $item)
+    public function exportAssignment(ItemAccessUser $itemAccessUser)
     {
-        $estados = ['Bueno', 'Regular', 'Malo'];
-        return view('admin.itemAccessUser.edit', ['item' => $item, 'estados' => $estados]);
+        set_time_limit(0);
+        ini_set("memory_limit", -1);
+        ini_set('max_execution_time', 0);
+        $fecha = Carbon::now();
+        $fechaTexto = $fecha->formatLocalized('%d del mes de %B del %Y');
+        $user = $itemAccessUser->user;
+        $accessUser = $itemAccessUser->accessUser;
+
+        $header = view::make('admin.itemAccessUser.pdf.header')->render();
+
+        $pdf = SnappyPdf::loadView('admin.itemAccessUser.pdf.index', ['itemAccessUser' => $itemAccessUser, 'accessUser' => $accessUser, 'user' => $user, 'fechaTexto' => $fechaTexto])
+            ->setPaper('a4')
+            ->setOption('margin-top', '3.5cm')
+            ->setOption('margin-bottom', '2.5cm')
+            ->setOption('margin-left', '2cm')
+            ->setOption('margin-right', '2cm')
+            ->setOption('header-html', $header);
+        return $pdf->inline('Control Acceso.pdf');
+    }
+
+    public function edit(ItemAccessUser $item)
+    {
+        //
     }
 
     /*public function update(UpdateItemUsersRequest $request, Item $item)
@@ -102,8 +181,9 @@ class ItemAccessUserController extends Controller
     //}
     }*/
 
-    public function destroy(Item $item)
+    public function destroy(ItemAccessUser $item)
     {
+        ItemAccessUserDetail::where('item_access_user_id', $item->id)->delete();
         $item->delete();
         return response()->json(['message' => 'Ítem eliminado con éxito']);
     }

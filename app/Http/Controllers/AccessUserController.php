@@ -16,6 +16,14 @@ use Carbon\Carbon;
 
 class AccessUserController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:access-user-list|access-user-create|access-user-edit|access-user-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:access-user-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:access-user-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:access-user-delete', ['only' => ['destroy']]);
+    }
+
     public function index(AccessUsersDataTable $dataTable)
     {
         //dd('"'.base_path("vendor\h4cc\wkhtmltopdf-amd64\bin\wkhtmltopdf-amd64").'"');

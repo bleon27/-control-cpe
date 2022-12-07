@@ -14,6 +14,9 @@ class ItemAccessUser extends Model
     protected $fillable = [
         'status',
         'reason',
+        'reason_return',
+        'observation',
+        'user_id',
         'access_user_id',
         'item_id',
         'assigned_at',
@@ -25,5 +28,15 @@ class ItemAccessUser extends Model
     public function accessUser()
     {
         return $this->belongsTo(AccessUser::class);
+    }
+
+    public function itemAccessUserDetails()
+    {
+        return $this->hasMany(ItemAccessUserDetail::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

@@ -31,9 +31,6 @@ class UsersDataTable extends DataTable
             ->editColumn('updated_at', function ($user) {
                 return $user->updated_at;
             })
-            ->editColumn('role_id', function ($user) {
-                return $user->role->name;
-            })
             ->addColumn(
                 'action',
                 function ($user) {
@@ -55,7 +52,6 @@ class UsersDataTable extends DataTable
             'unit',
             'position',
             'email',
-            'role_id',
             'created_at',
             'updated_at',
         ])->newQuery();
@@ -101,7 +97,6 @@ class UsersDataTable extends DataTable
             Column::make('unit')->title('Unidad'),
             Column::make('position')->title('Cargo'),
             Column::make('email')->title('Correo'),
-            Column::make('role_id')->title('Rol'),
             Column::make('created_at')->title('Fehca creacion'),
             Column::make('updated_at')->title('Fecha actualizacion'),
             Column::computed('action')

@@ -12,6 +12,7 @@ class TempItemAccessUser extends Model
     //protected $table = 'temp_item_access_users';
 
     protected $fillable = [
+        'amount',
         'user_id',
         'item_id',
         'access_user_id',

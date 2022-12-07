@@ -11,8 +11,10 @@ return new class extends Migration {
             $table->id();
             $table->string('status', 20);
             $table->string('reason')->nullable();
+            $table->string('reason_return')->nullable();
+            $table->string('observation')->nullable();
+            $table->foreignId('user_id')->constrained();
             $table->foreignId('access_user_id')->constrained();
-            $table->foreignId('item_id')->constrained();
             $table->timestamp('assigned_at', $precision = 0)->nullable();
             $table->timestamp('returned_at', $precision = 0)->nullable();
             $table->softDeletes();

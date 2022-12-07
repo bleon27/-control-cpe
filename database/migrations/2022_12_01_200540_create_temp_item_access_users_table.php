@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('temp_item_access_users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('amount');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('item_id')->constrained();
             $table->foreignId('access_user_id')->constrained();

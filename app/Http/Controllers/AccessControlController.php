@@ -13,20 +13,26 @@ use Illuminate\Support\Facades\View;
 
 class AccessControlController extends Controller
 {
-
+    function __construct()
+    {
+        $this->middleware('permission:access-control-list|access-control-create|access-control-edit|access-control-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:access-control-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:access-control-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:access-control-delete', ['only' => ['destroy']]);
+    }
     public function index(AccessControlDataTable $dataTable)
     {
         return $dataTable->render('admin.accessControl.index');
     }
 
-    public function accessControl()
+    /*public function accessControl()
     {
         return view('accessControl');
-    }
+    }*/
 
     public function create()
     {
-        //
+        return view('accessControl');
     }
 
     public function store(StoreAccessControlRequest $request)

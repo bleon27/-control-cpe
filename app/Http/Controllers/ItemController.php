@@ -12,6 +12,13 @@ use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:item-list|item-create|item-edit|item-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:item-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:item-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:item-delete', ['only' => ['destroy']]);
+    }
     public function index(ItemsDataTable $dataTable)
     {
         return $dataTable->render('admin.items.index');
@@ -45,8 +52,8 @@ class ItemController extends Controller
     public function update(UpdateItemRequest $request, Item $item)
     {
         //if (request()->ajax()) {
-            $item->update($request->validated());
-            return response()->json(['message' => 'Ítem Actualizado con éxito']);
+        $item->update($request->validated());
+        return response()->json(['message' => 'Ítem Actualizado con éxito']);
         //}
     }
 

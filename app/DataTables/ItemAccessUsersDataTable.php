@@ -22,7 +22,17 @@ class ItemAccessUsersDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', 'itemusers.action')
+            ->addColumn('actions', function ($acessUser) {
+                $urlExporAsigned = URL::route('itemsAccessUser.exportAssignment', $acessUser->id);
+                $urlDestroy = URL::route('itemsAccessUser.destroy', $acessUser->id);
+                $str = '<div class="btn-group">';
+                //$str .= "<a class='btn btn-warning btn-sm' href='$urlShow' title='Ver'><i class='fa-solid fa-eye'></i></a>";
+                $str .= "<a class='btn btn-danger btn-sm export-item' href='$urlExporAsigned' title='Exportar'><i class='bi bi-file-earmark-pdf'></i></a>";
+                $str .= "<a class='btn btn-danger btn-sm delete-item' href='$urlDestroy' title='Eliminar'><i class='fa-solid fa-xmark'></i></a>";
+                $str .= '</div>';
+                return $str;
+            })
+            ->rawColumns(['actions'])
             ->setRowId('id');
     }
 
@@ -34,10 +44,10 @@ class ItemAccessUsersDataTable extends DataTable
         $tableItem = $item->getTable();
         $tableItemAccessUser = $model->getTable();
         return $model->join("$tableAccessUser", "$tableItemAccessUser.access_user_id", "$tableAccessUser.id")
-        ->join("$tableItem", "$tableItemAccessUser.item_id", "$tableItem.id")
+        //->join("$tableItem", "$tableItemAccessUser.item_id", "$tableItem.id")
         ->select(["$tableItemAccessUser.id", 'status', 'reason',
         DB::raw("CONCAT(names,' ',surnames) as full_names"),
-        DB::raw("$tableItem.name as item"),
+        //DB::raw("$tableItem.name as item"),
         'assigned_at', 'returned_at'])
         ->newQuery();
     }
@@ -69,15 +79,15 @@ class ItemAccessUsersDataTable extends DataTable
         return [
             Column::make('id'),
             Column::make('full_names')->title('Usuario'),
-            Column::make('item')->title('Equipo'),
+            //Column::make('item')->title('Equipo'),
             Column::make('status')->title('Estado'),
             Column::make('reason')->title('Razon'),
             Column::make('assigned_at')->title('Fecha Asignacion'),
             Column::make('returned_at')->title('Fecha Devolucion'),
-            Column::computed('action')
+            Column::computed('actions')
                   ->exportable(false)
                   ->printable(false)
-                  ->addClass('text-center'),
+                  ->addClass('text-center')->title('Acciones'),
         ];
     }
 

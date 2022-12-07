@@ -26,22 +26,26 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-3">
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" id="accessUser" name="accessUser"
                                     placeholder="Ingrese la cedula del usuario">
                                 <label for="accessUser">Ingrese la cedula del usuario</label>
                             </div>
                         </div>
-                        <div class="col-6 d-flex align-items-center">
-                            <h4 id="usuarioSeleccionado"></h4>
+                        <div class="col-7 d-flex align-items-center">
+                            <h4 id="usuarioSeleccionado" class="w-100 text-center"></h4>
+                        </div>
+                        <div class="col-2 d-flex align-items-center">
+                            <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle"
+                                role="button">Lista de ítems</a>
                         </div>
                     </div>
                     {{-- $dataTable->table(attributes:['style'=>'width:100%']) --}}
                     <table id="table-temp" class="display" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Id</th>
+                                <th>id</th>
                                 <th>Nombre</th>
                                 <th>Marca</th>
                                 <th>Modelo</th>
@@ -49,12 +53,13 @@
                                 <th>Cod. CNE</th>
                                 <th>Ram</th>
                                 <th>Disco</th>
+                                <th>Cant.</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
-                                <th>Id</th>
+                                <th>id</th>
                                 <th>Nombre</th>
                                 <th>Marca</th>
                                 <th>Modelo</th>
@@ -62,67 +67,21 @@
                                 <th>Cod. CNE</th>
                                 <th>Ram</th>
                                 <th>Disco</th>
+                                <th>Cant.</th>
                                 <th>Acciones</th>
                             </tr>
                         </tfoot>
                     </table>
+                    <div class="form-floating my-3">
+                        <textarea class="form-control" placeholder="Leave a comment here" id="observacion" name="observacion"></textarea>
+                        <label for="observacion">***OBSERVACIONES
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" id="registrar">Registrar</button>
                 </div>
-                {{--
-                <form action="{{ route('item.store') }}" method="POST" id="createItem">
-                    <div class="card-body">
-                        @csrf
-                        @method('POST')
-                        <div class="row mt-3">
-                            <div class="col-6 align-items-center d-flex mb-3">
-                                <label for="inputNombre" class="col-form-label">Nombre</label>
-                                <input type="text" id="inputNombre" name="nombre" class="form-control ms-2"
-                                    autocomplete="off" aria-describedby="nombreHelpInline">
-                            </div>
-                            <div class="col-6 align-items-center d-flex mb-3">
-                                <label for="inputMarca" class="col-form-label">Marca</label>
-                                <input type="text" id="inputMarca" name="marca" class="form-control ms-2"
-                                    autocomplete="off" aria-describedby="marcaHelpInline">
-                            </div>
-                            <div class="col-6 align-items-center d-flex mb-3">
-                                <label for="inputModelo" class="col-form-label">Modelo</label>
-                                <input type="text" id="inputModelo" name="modelo" class="form-control ms-2"
-                                    autocomplete="off" aria-describedby="modeloHelpInline">
-                            </div>
-                            <div class="col-6 align-items-center d-flex mb-3">
-                                <label for="inputSerie" class="col-form-label">Serie</label>
-                                <input type="text" id="inputSerie" name="serie" class="form-control ms-2"
-                                    autocomplete="off" aria-describedby="serieHelpInline">
-                            </div>
-                            <div class="col-6 align-items-center d-flex mb-3">
-                                <label for="inputCodigoCne" class="col-form-label">Cod. CNE</label>
-                                <input type="text" id="inputCodigoCne" name="codigo_cne" class="form-control ms-2"
-                                    autocomplete="off" aria-describedby="codigoCneHelpInline">
-                            </div>
-                            <div class="col-6 align-items-center d-flex mb-3">
-                                <label for="inputProcesador" class="col-form-label">Procesador</label>
-                                <input type="text" id="inputProcesador" name="procesador" class="form-control ms-2"
-                                    autocomplete="off" aria-describedby="procesadorHelpInline">
-                            </div>
-                            <div class="col-6 align-items-center d-flex mb-3">
-                                <label for="inputRam" class="col-form-label">Ram</label>
-                                <input type="text" id="inputRam" name="ram" class="form-control ms-2"
-                                    autocomplete="off" aria-describedby="remHelpInline">
-                            </div>
-                            <div class="col-6 align-items-center d-flex mb-3">
-                                <label for="inputDisco" class="col-form-label">Disco</label>
-                                <input type="text" id="inputDisco" name="disco" class="form-control ms-2"
-                                    autocomplete="off" aria-describedby="discoHelpInline">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer text-center">
-                        <button type="submit" class="btn btn-primary">Registrar</button>
-                    </div>
-                </form>
-                     --}}
             </div>
         </div>
-        <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
+
 
     </main>
 @endsection
@@ -148,6 +107,7 @@
                                 <th>Cod. CNE</th>
                                 <th>Ram</th>
                                 <th>Disco</th>
+                                <th>Cant.</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -161,14 +121,13 @@
                                 <th>Cod. CNE</th>
                                 <th>Ram</th>
                                 <th>Disco</th>
+                                <th>Cant.</th>
                                 <th>Acciones</th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Open
-                        second modal</button>
                 </div>
             </div>
         </div>
@@ -217,7 +176,7 @@
                     language: {url:"{{ asset('packages/DataTables-1.12.1/locale/es.json') }}"},
                     columnDefs: [{
                         "data": "id",
-                        "targets": [0]
+                        "targets": [0],
                     },{
                         "data": "name",
                         "targets": [1]
@@ -240,8 +199,11 @@
                         "data": "disk",
                         "targets": [7]
                     },{
-                        "data": "actions",
+                        "data": "amount",
                         "targets": [8]
+                    },{
+                        "data": "actions",
+                        "targets": [9]
                     }],
                     "buttons": []
                 });
@@ -251,10 +213,6 @@
 
             var table_items
             function items(){
-                /*
-                table_items.clear().draw();
-                table_items.colReorder.reset();
-                */
                 if (table_items != null)
                     table_items.destroy();
                 table_items = $('#table-items').DataTable({
@@ -296,12 +254,19 @@
                         "data": "disk",
                         "targets": [7]
                     },{
+                        "data": null,
+                        "targets": [8],
+                        render: function(data, type, row) {
+                            return `<input type="text" class="form-control" id="floatingInput" placeholder="1" value="1">`;
+                        }
+                    },{
                         "data": "actions",
-                        "targets": [8]
+                        "targets": [9]
                     }],
                     "buttons": []
                 });
             }
+
             items()
             $('#accessUser').keyup(function(e){
                 if (e.which === 13) {
@@ -358,7 +323,7 @@
                         insertBlockUI();
                     },
                     success: function (json) {
-                        table_items.ajax.reload();
+                        table_items.ajax.reload( null, false );
                         tempItems_table.ajax.reload();
                     },
                     error: function (xhr, status) {
@@ -396,7 +361,7 @@
                         insertBlockUI();
                     },
                     success: function (json) {
-                        table_items.ajax.reload();
+                        table_items.ajax.reload( null, false );
                         tempItems_table.ajax.reload();
                     },
                     error: function (xhr, status) {
@@ -419,6 +384,47 @@
                     }
                 });
             });
-        })
+            $('#registrar').click(function(){
+                var observacion = null;
+                if($('#observacion').val()!=''){
+                    observacion = $('#observacion').val();
+                }
+                $.ajax({
+                    url: "{{ route('itemsAccessUser.store') }}",
+                    type: 'POST',
+                    data: {
+                        _method: "POST",
+                        _token: "{{ csrf_token() }}",
+                        idCliente: idClient,
+                        observacion: observacion,
+                    },
+                    beforeSend: function () {
+                        insertBlockUI();
+                    },
+                    success: function (json) {
+                        table_items.ajax.reload( null, false );
+                        tempItems_table.ajax.reload();
+                    },
+                    error: function (xhr, status) {
+                        var errors = $.parseJSON(xhr.responseText);
+                        var textErrores = "";
+                        var cont = 0;
+                        $.each(errors.errors, function (key, value) {
+                            if (cont == 0) {
+                                textErrores += value;
+                                cont++
+                            } else {
+                                textErrores += "<br>" + value
+                            }
+                        });
+                        messageAccessControl('error', 'Error', textErrores, null, 5000);
+                    },
+                    complete: function (xhr, status) {
+                        //fromThis.trigger("reset");
+                        $.unblockUI()
+                    }
+                });
+            });
+        });
     </script>
 @endpush

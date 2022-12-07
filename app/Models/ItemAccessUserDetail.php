@@ -6,11 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Item extends Model
+class ItemAccessUserDetail extends Model
 {
     use HasFactory;
     use SoftDeletes;
-
     protected $fillable = [
         'name',
         'brand',
@@ -20,8 +19,10 @@ class Item extends Model
         'processor',
         'ram',
         'disk',
-        'descripcion',
         'type',
         'state',
+        'amount',
+        'item_id',
+        'item_access_user_id',
     ];
 }
