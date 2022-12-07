@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="{{ asset('packages/bootstrap-icons/font/bootstrap-icons.css') }}">
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <style>
+        #sidebarMenu i {
+            width: 25px!important;
+        }
+    </style>
     @stack('styles')
 </head>
 

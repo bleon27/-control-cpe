@@ -132,6 +132,7 @@
             </div>
         </div>
     </div>
+
 @endsection
 
 @push('scripts')
@@ -253,12 +254,15 @@
                     },{
                         "data": "disk",
                         "targets": [7]
-                    },{
+                    },/*{
                         "data": null,
                         "targets": [8],
                         render: function(data, type, row) {
-                            return `<input type="text" class="form-control" id="floatingInput" placeholder="1" value="1">`;
+                            return `<input type="text" class="form-control cantidad" id="floatingInput" placeholder="1" value="1">`;
                         }
+                    }*/{
+                        "data": "amount",
+                        "targets": [8]
                     },{
                         "data": "actions",
                         "targets": [9]
@@ -310,6 +314,7 @@
                 }
             });
             table_items.on('click', '.btn-assign', function (e){
+                var cantidad = $(this).parent().parent().find('.cantidad').val();
                 $.ajax({
                     url: "{{ route('tempItems.store') }}",
                     type: 'POST',
@@ -318,6 +323,7 @@
                         _token: "{{ csrf_token() }}",
                         id: $(this).parent().parent().data('id'),
                         idClient: idClient,
+                        cantidad: cantidad,
                     },
                     beforeSend: function () {
                         insertBlockUI();

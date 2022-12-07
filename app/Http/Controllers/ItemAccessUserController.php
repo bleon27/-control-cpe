@@ -47,11 +47,23 @@ class ItemAccessUserController extends Controller
                 $str = "<button class='btn btn-success btn-sm btn-assign'";
                 $str .= "title='Asignar'><i class='fa-solid fa-plus'></i></button>";
                 return $str;
+            })->editColumn('amount', function ($item) use ($request) {
+                $tempItemAccessUser = TempItemAccessUser::where('item_id', $item->id)
+                    ->where('user_id', auth()->user()->id)
+                    ->where('access_user_id', $request->accessUser)->first();
+                $str = '';
+                if (!is_null($tempItemAccessUser)) {
+                    $str = '<input type="text" class="form-control cantidad" id="floatingInput" placeholder="1" value="' . $tempItemAccessUser->amount . '">';
+                } else {
+                    $str = '<input type="text" class="form-control cantidad" id="floatingInput" placeholder="1" value="1">';
+                }
+                return $str;
             })
             ->setRowId('id')
             ->setRowClass(function ($item) use ($request) {
                 foreach ($request->accessUser as $key => $value) {
                     $tempItemAccessUser = TempItemAccessUser::where('item_id', $item->id)
+                        ->where('user_id', auth()->user()->id)
                         ->where('access_user_id', $request->accessUser);
                     if ($tempItemAccessUser->exists()) {
                         return 'selected';
@@ -60,7 +72,7 @@ class ItemAccessUserController extends Controller
                 return '';
             })
             ->setRowAttr(['data-id' => '{{$id}}'])
-            ->rawColumns(['actions'])
+            ->rawColumns(['actions', 'amount'])
             ->toJson();
     }
 
@@ -97,12 +109,14 @@ class ItemAccessUserController extends Controller
             $tempItemAccessUser = new TempItemAccessUser;
             $tempItemAccessUserTable = $tempItemAccessUser->getTable();
             $tempItemAccessUser = $tempItemAccessUser->where('user_id', auth()->user()->id)
-                ->where('access_user_id', $request->access_user_id)->first();
+                ->where('access_user_id', $request->access_user_id);
 
             $tempStore = $tempItemAccessUser->join("$itemsTable", "$tempItemAccessUserTable.item_id", "$itemsTable.id")
-                ->select(["$tempItemAccessUserTable.amount", 'user_id', 'item_id',
-                'access_user_id', 'name', 'brand', 'model', 'serie',
-                'cne_code', 'processor', 'ram', 'disk', 'state'])
+                ->select([
+                    "$tempItemAccessUserTable.amount", 'user_id', 'item_id',
+                    'access_user_id', 'name', 'brand', 'model', 'serie',
+                    'cne_code', 'processor', 'ram', 'disk', 'state'
+                ])
                 ->get();
 
             DB::transaction(function () use ($request, $tempStore, $tempItemAccessUser) {
@@ -151,6 +165,7 @@ class ItemAccessUserController extends Controller
         set_time_limit(0);
         ini_set("memory_limit", -1);
         ini_set('max_execution_time', 0);
+
         $fecha = Carbon::now();
         $fechaTexto = $fecha->formatLocalized('%d del mes de %B del %Y');
         $user = $itemAccessUser->user;

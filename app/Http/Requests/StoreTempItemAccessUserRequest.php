@@ -25,6 +25,7 @@ class StoreTempItemAccessUserRequest extends FormRequest
         return [
             'item_id' => ["exists:$tableTemp,id"],
             'access_user_id' => ["exists:$tableAccessUser,id"],
+            'amount' => ["integer", 'min:1'],
             'user_id' => ["exists:$tableUser,id"],
         ];
     }
@@ -34,6 +35,7 @@ class StoreTempItemAccessUserRequest extends FormRequest
         $this->merge(
             [
                 'item_id' => trim($this->id),
+                'amount' => trim($this->cantidad),
                 'access_user_id' => trim($this->idClient),
                 'user_id' => auth()->user()->id,
             ]
