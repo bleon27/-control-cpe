@@ -11,6 +11,10 @@
             box-shadow: inset 0 0 0 9999px rgb(25 155 23 / 90%);
             color: black;
         }
+
+        #razon_recepcion {
+            height: 100px;
+        }
     </style>
 @endpush
 
@@ -25,49 +29,32 @@
             </div>
         </div>
     </main>
+@endsection
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+@section('modal')
+    <div class="modal fade" id="modalRecepcion" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Asignacion de equipos</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Recepción de equipos informaticos</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="POST">
-                        @method('POST')
-                        @csrf
-                        <div class="mb-3">
-                            <table class="table table-striped" id="tabla-asignar">
-                                <thead>
-                                    <tr>
-                                        <th>{{ __('Nombre') }}</th>
-                                        <th>{{ __('Marca') }}</th>
-                                        <th>{{ __('Modelo') }}</th>
-                                        <th>{{ __('Serie') }}</th>
-                                        <th>{{ __('Cod. Cne') }}</th>
-                                        <th>{{ __('Estado') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="mb-3">
-                            <label for="asignarUsuario" class="col-form-label">Asignar al usuario</label>
-                            <input type="text" class="form-control" id="asignarUsuario" name="asignarUsuario">
-                        </div>
-                    </form>
+                    <h4 id="titulo_recepcion"></h4>
+                    <div class="form-floating my-3">
+                        <textarea class="form-control" placeholder="Leave a comment here" id="razon_recepcion" rows="10"
+                            name="razon_recepcion"></textarea>
+                        <label for="razon_recepcion">***OBSERVACIONES</label>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Send message</button>
+                    <button class="btn btn-primary" id="registrar_recepcion">Registrar</button>
                 </div>
             </div>
         </div>
     </div>
+    <a class="btn btn-primary" data-bs-toggle="modal" href="#modalRecepcion" role="button">Open first modal</a>
 @endsection
-
 @push('scripts')
     <script type="module" src="{{ asset('packages/DataTables-1.12.1/Responsive-2.3.0/js/dataTables.responsive.js') }}"></script>
     <script type="module" src="{{ asset('packages/DataTables-1.12.1/Responsive-2.3.0/js/responsive.bootstrap5.js') }}"></script>
@@ -85,12 +72,12 @@
         var itemUsers_table;
         const usarDatatable = () => {
             itemUsers_table = window.LaravelDataTables["itemusers-table"];
-            console.log('sdfds')
-            btnEliminarItem('{{ csrf_token() }}');
-            //btnAsignItem();
+            btnEliminarItem();
+            btnFichaAsignacion();
+            btnFichaRecpcion();
         }
 
-        const btnEliminarItem = (_token) => {
+        const btnEliminarItem = () => {
             itemUsers_table.on('click', '.delete-item', function (e){
                 e.preventDefault();
                 e.stopPropagation();
@@ -104,19 +91,19 @@
                     denyButtonText: `No`,
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        eliminarItem(fromThis, _token);
+                        eliminarItem(fromThis);
                     }
                 });
             });
         }
 
-        const eliminarItem = (fromThis, _token) => {
+        const eliminarItem = (fromThis) => {
             $.ajax({
                 url: fromThis.attr('href'),
                 type: 'DELETE',
                 data: {
                     _method: 'DELETE',
-                    _token: _token,
+                    _token: $('meta[name="csrf-token"]').attr('content'),
                 },
                 beforeSend: function () {
                     insertBlockUI();
@@ -145,87 +132,88 @@
             });
         }
 
-        const btnAsignItem = () =>{
-            itemUsers_table.on('click', '.btn-assign', function (e){
+        const btnFichaAsignacion = () => {
+            itemUsers_table.on('click', '.ficha-asignacion', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 var btnThis = $(this);
-                //<td>${btnThis.data('codigo')}</td>
-                var tbody = `
-                    <tr>
-                        <td>${btnThis.data('nombre')}</td>
-                        <td>${btnThis.data('marca')}</td>
-                        <td>${btnThis.data('modelo')}</td>
-                        <td>${btnThis.data('serie')}</td>
-                        <td>${btnThis.data('codigocne')}</td>
-                        <td>${btnThis.data('estado')}</td>
-                    </tr>
-                `;
-                $('#tabla-asignar tbody').html(tbody);
-
-            });
-        }
-
-        const asignItem = (fromThis, _token) => {
-            $.ajax({
-                url: fromThis.attr('href'),
-                type: 'DELETE',
-                data: {
-                    _method: 'DELETE',
-                    _token: _token,
-                },
-                beforeSend: function () {
-                    insertBlockUI();
-                },
-                success: function (json) {
-                    itemUsers_table.ajax.reload();
-                    messageAccessControl('success', json.message);
-                },
-                error: function (xhr, status) {
-                    var errors = $.parseJSON(xhr.responseText);
-                    var textErrores = "";
-                    var cont = 0;
-                    $.each(errors.errors, function (key, value) {
-                        if (cont == 0) {
-                            textErrores += value;
-                            cont++;
-                        } else {
-                            textErrores += "<br>" + value;
-                        }
-                    });
-                    messageAccessControl('error', 'Error', textErrores, null, 5000);
-                },
-                complete: function (xhr, status) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', btnThis.attr('href'), true);
+                xhr.responseType = 'blob';
+                insertBlockUI();
+                xhr.onload = function (e) {
+                    if (this.status == 200) {
+                        var blob = new Blob([this.response], {
+                            type: 'application/pdf'
+                        });
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = "Usuarios con acceso al CPE.pdf";
+                        link.click();
+                    } else {
+                        messageAccessControl('error', 'Error', 'Error de conexión', null, 5000);
+                    }
                     $.unblockUI();
-                }
+                };
+                xhr.send();
             });
         }
 
-        $('#asignarUsuario').click(function(){
-            $(this).val();
-            var url = "{{ route('item.show', '_idUser') }}";
-            url = url.replace(url, $(this).val());
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function (json) {
-                    itemUsers_table.ajax.reload();
-                },
-                error: function (xhr, status) {
-                    var errors = $.parseJSON(xhr.responseText);
-                    var textErrores = "";
-                    var cont = 0;
-                    $.each(errors.errors, function (key, value) {
-                        if (cont == 0) {
-                            textErrores += value;
-                            cont++;
-                        } else {
-                            textErrores += "<br>" + value;
-                        }
-                    });
-                    messageAccessControl('error', 'Error', textErrores, null, 5000);
-                }
+        const btnFichaRecpcion = () => {
+            var urlFichaRecepcion='';
+            itemUsers_table.on('click', '.registrar-recepcion', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var btnThis = $(this);
+                urlFichaRecepcion = btnThis.attr('href');
+                //btnThis.parent().parent().data('id');
+                var id = btnThis.parent().parent().parent().attr('id');
+                $('#titulo_recepcion').html(`Recepción Nº ${id}`);
+                $('#modalRecepcion').modal('show');
             });
-        });
+
+            $('#registrar_recepcion').click(function(){
+                var razon = $('#razon_recepcion').val();
+                if(razon == ''){
+                    razon = null;
+                }
+                $.ajax({
+                    url: urlFichaRecepcion,
+                    type: 'POST',
+                    data: {
+                        _method: 'PUT',
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        razon: $('#razon_recepcion').val()
+                    },
+                    beforeSend: function () {
+                        insertBlockUI();
+                    },
+                    success: function (json) {
+                        itemUsers_table.ajax.reload();
+                        messageAccessControl('success', json.message);
+                        $('#modalRecepcion').modal('hide');
+                        //$('#razon_recepcion').val('');
+                    },
+                    error: function (xhr, status) {
+                        var errors = $.parseJSON(xhr.responseText);
+                        var textErrores = "";
+                        var cont = 0;
+                        $.each(errors.errors, function (key, value) {
+                            if (cont == 0) {
+                                textErrores += value;
+                                cont++;
+                            } else {
+                                textErrores += "<br>" + value;
+                            }
+                        });
+                        messageAccessControl('error', 'Error', textErrores, null, 5000);
+                    },
+                    complete: function (xhr, status) {
+                        $.unblockUI();
+                    }
+                });
+            });
+        }
+
     </script>
 @endpush

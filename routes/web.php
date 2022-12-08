@@ -60,7 +60,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/items-accesso-usuario/ver/{item}', [ItemAccessUserController::class, 'show'])->name('itemsAccessUser.show');
     Route::get('/items-accesso-usuario/exportAssignment/{itemAccessUser}', [ItemAccessUserController::class, 'exportAssignment'])->name('itemsAccessUser.exportAssignment');
     Route::get('/items-accesso-usuario/editar/{item}', [ItemAccessUserController::class, 'edit'])->name('itemsAccessUser.edit');
-    Route::put('/items-accesso-usuario/editar/{item}', [ItemAccessUserController::class, 'update'])->name('itemsAccessUser.update');
+    Route::put('/items-accesso-usuario/editar/{itemAccessUser}', [ItemAccessUserController::class, 'update'])->name('itemsAccessUser.update');
+    Route::get('/items-accesso-usuario/exportReceived/{itemAccessUser}', [ItemAccessUserController::class, 'exportReceived'])->name('itemsAccessUser.exportReceived');
     Route::delete('/items-accesso-usuario/destroy/{item}', [ItemAccessUserController::class, 'destroy'])->name('itemsAccessUser.destroy');
 
     //temp

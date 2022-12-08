@@ -9,7 +9,7 @@ use App\Models\ItemAccessUserDetail;
 use App\DataTables\ItemAccessUsersDataTable;
 use App\DataTables\TempItemsAccessUsersDataTable;
 use App\Http\Requests\StoreItemUsersRequest;
-use App\Http\Requests\UpdateItemUsersRequest;
+use App\Http\Requests\UpdateItemAccessUserRequest;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
@@ -48,17 +48,17 @@ class ItemAccessUserController extends Controller
                 $str .= "title='Asignar'><i class='fa-solid fa-plus'></i></button>";
                 return $str;
             })->editColumn('amount', function ($item) use ($request) {
-                $tempItemAccessUser = TempItemAccessUser::where('item_id', $item->id)
-                    ->where('user_id', auth()->user()->id)
-                    ->where('access_user_id', $request->accessUser)->first();
-                $str = '';
-                if (!is_null($tempItemAccessUser)) {
-                    $str = '<input type="text" class="form-control cantidad" id="floatingInput" placeholder="1" value="' . $tempItemAccessUser->amount . '">';
-                } else {
-                    $str = '<input type="text" class="form-control cantidad" id="floatingInput" placeholder="1" value="1">';
-                }
-                return $str;
-            })
+            $tempItemAccessUser = TempItemAccessUser::where('item_id', $item->id)
+                ->where('user_id', auth()->user()->id)
+                ->where('access_user_id', $request->accessUser)->first();
+            $str = '';
+            if (!is_null($tempItemAccessUser)) {
+                $str = '<input type="text" class="form-control cantidad" id="floatingInput" placeholder="1" value="' . $tempItemAccessUser->amount . '">';
+            } else {
+                $str = '<input type="text" class="form-control cantidad" id="floatingInput" placeholder="1" value="1">';
+            }
+            return $str;
+        })
             ->setRowId('id')
             ->setRowClass(function ($item) use ($request) {
                 foreach ($request->accessUser as $key => $value) {
@@ -113,9 +113,19 @@ class ItemAccessUserController extends Controller
 
             $tempStore = $tempItemAccessUser->join("$itemsTable", "$tempItemAccessUserTable.item_id", "$itemsTable.id")
                 ->select([
-                    "$tempItemAccessUserTable.amount", 'user_id', 'item_id',
-                    'access_user_id', 'name', 'brand', 'model', 'serie',
-                    'cne_code', 'processor', 'ram', 'disk', 'state'
+                    "$tempItemAccessUserTable.amount",
+                    'user_id',
+                    'item_id',
+                    'access_user_id',
+                    'name',
+                    'brand',
+                    'model',
+                    'serie',
+                    'cne_code',
+                    'processor',
+                    'ram',
+                    'disk',
+                    'state'
                 ])
                 ->get();
 
@@ -171,9 +181,9 @@ class ItemAccessUserController extends Controller
         $user = $itemAccessUser->user;
         $accessUser = $itemAccessUser->accessUser;
 
-        $header = view::make('admin.itemAccessUser.pdf.header')->render();
+        $header = view::make('admin.itemAccessUser.pdf.asigned.header')->render();
 
-        $pdf = SnappyPdf::loadView('admin.itemAccessUser.pdf.index', ['itemAccessUser' => $itemAccessUser, 'accessUser' => $accessUser, 'user' => $user, 'fechaTexto' => $fechaTexto])
+        $pdf = SnappyPdf::loadView('admin.itemAccessUser.pdf.asigned.index', ['itemAccessUser' => $itemAccessUser, 'accessUser' => $accessUser, 'user' => $user, 'fechaTexto' => $fechaTexto])
             ->setPaper('a4')
             ->setOption('margin-top', '3.5cm')
             ->setOption('margin-bottom', '2.5cm')
@@ -188,13 +198,36 @@ class ItemAccessUserController extends Controller
         //
     }
 
-    /*public function update(UpdateItemUsersRequest $request, Item $item)
+    public function update(UpdateItemAccessUserRequest $request, ItemAccessUser $itemAccessUser)
     {
-    //if (request()->ajax()) {
-    $item->update($request->validated());
-    return response()->json(['message' => 'Ítem Actualizado con éxito']);
-    //}
-    }*/
+        if (request()->ajax()) {
+            $itemAccessUser->update($request->validated());
+            return response()->json(['message' => 'Ficha de recepción registrada']);
+        }
+    }
+
+    public function exportReceived(ItemAccessUser $itemAccessUser)
+    {
+        set_time_limit(0);
+        ini_set("memory_limit", -1);
+        ini_set('max_execution_time', 0);
+
+        $fecha = Carbon::now();
+        $fechaTexto = $fecha->formatLocalized('%d del mes de %B del %Y');
+        $user = $itemAccessUser->user;
+        $accessUser = $itemAccessUser->accessUser;
+
+        $header = view::make('admin.itemAccessUser.pdf.received.header')->render();
+
+        $pdf = SnappyPdf::loadView('admin.itemAccessUser.pdf.received.index', ['itemAccessUser' => $itemAccessUser, 'accessUser' => $accessUser, 'user' => $user, 'fechaTexto' => $fechaTexto])
+            ->setPaper('a4')
+            ->setOption('margin-top', '3.5cm')
+            ->setOption('margin-bottom', '2.5cm')
+            ->setOption('margin-left', '2cm')
+            ->setOption('margin-right', '2cm')
+            ->setOption('header-html', $header);
+        return $pdf->inline('Control Acceso.pdf');
+    }
 
     public function destroy(ItemAccessUser $item)
     {

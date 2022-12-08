@@ -66,7 +66,7 @@
                     <a type="button"
                         class="nav-link dropdown-toggle {{ Helpers::activeRoute(['itemsAccessUser.index', 'itemsAccessUser.create'], 'active') }}"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-file-lines"></i> {{ __('Asignacion') }}
+                        <i class='fa-solid fa-boxes-packing'></i> {{ __('Asignacion') }}
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item {{ Helpers::activeRoute(['itemsAccessUser.index'], 'active') }}"

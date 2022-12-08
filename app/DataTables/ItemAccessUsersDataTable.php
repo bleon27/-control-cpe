@@ -22,12 +22,20 @@ class ItemAccessUsersDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('actions', function ($acessUser) {
-                $urlExporAsigned = URL::route('itemsAccessUser.exportAssignment', $acessUser->id);
-                $urlDestroy = URL::route('itemsAccessUser.destroy', $acessUser->id);
+            ->addColumn('actions', function ($itemAccessUser) {
+                $urlExporAsigned = URL::route('itemsAccessUser.exportAssignment', $itemAccessUser->id);
+                $urlRegistrarReceived = URL::route('itemsAccessUser.update', $itemAccessUser->id);
+                $urlExporReceived = URL::route('itemsAccessUser.exportReceived', $itemAccessUser->id);
+                $urlDestroy = URL::route('itemsAccessUser.destroy', $itemAccessUser->id);
                 $str = '<div class="btn-group">';
-                //$str .= "<a class='btn btn-warning btn-sm' href='$urlShow' title='Ver'><i class='fa-solid fa-eye'></i></a>";
-                $str .= "<a class='btn btn-danger btn-sm export-item' href='$urlExporAsigned' title='Exportar'><i class='bi bi-file-earmark-pdf'></i></a>";
+                //$str .= "<a class='btn btn-warning btn-sm' href='$urlShow' title='Ver'><i class='fa-solid fa-eye'></i></a>";<i class="fa-solid fa-boxes-packing"></i>
+                $str .= "<a class='btn btn-danger btn-sm ficha-asignacion' href='$urlExporAsigned' title='Ficha de asignacion'><i class='bi bi-file-earmark-pdf'></i></a>";
+                if(is_null($itemAccessUser->returned_at)){
+                    $str .= "<a class='btn btn-danger btn-sm registrar-recepcion' href='$urlRegistrarReceived' title='Registrar recepción'><i class='fa-solid fa-left-long'></i></a>";
+                }else{
+                    $str .= "<a class='btn btn-danger btn-sm ficha-recepcion' href='$urlExporReceived' title='Ficha de recepción'><i class='bi bi-file-earmark-pdf'></i></a>";
+                }
+
                 $str .= "<a class='btn btn-danger btn-sm delete-item' href='$urlDestroy' title='Eliminar'><i class='fa-solid fa-xmark'></i></a>";
                 $str .= '</div>';
                 return $str;

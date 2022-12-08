@@ -21,4 +21,25 @@ class AccessUser extends Model
         'unit',
         'position',
     ];
+
+    public function getUnitAbbreviateAttribute()
+    {
+        $str = mb_strtoupper($this->attributes['unit'], 'UTF-8');
+        $strSeparate = explode(' ', $str);
+        $strConst = ['A', 'E', 'I', 'O', 'U', 'DE', 'CON', 'POR', 'Y', 'EL', 'LAS', 'LOS', 'LA'];
+        $abreviado = '';
+        foreach ($strSeparate as $key => $value) {
+            $ctrl = false;
+            foreach ($strConst as $key2 => $value2) {
+                if ($value == $value2) {
+                    $ctrl = true;
+                }
+            }
+            if (!$ctrl) {
+                $abreviado .= substr($value, 0, 1);
+            }
+
+        }
+        return $abreviado;
+    }
 }

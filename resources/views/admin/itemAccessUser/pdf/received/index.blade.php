@@ -105,7 +105,7 @@
 
 <body>
     <p class="style-text">
-        En las instalaciones de la Delegación Provincial Electoral de Santo Domingo de los Tsáchilas, al {{ $fechaTexto }}, se procede a la suscripción de la presente <b>ACTA ENTREGA-RECEPCION</b>&nbsp;&nbsp;&nbsp;de bienes de Bodega Informática provisional CPE, donde actúa<b> {{ $accessUser->names . ' ' . $accessUser->surnames }}&nbsp;y&nbsp;{{ $user->names . ' ' . $user->surnames }}</b>&nbsp;&nbsp;&nbsp;como <b>{{ $user->position }} - {{ $user->unit }}</b>, de acuerdo a la siguiente acta:
+        En las instalaciones de la Delegación Provincial Electoral de Santo Domingo de los Tsáchilas, al {{ $fechaTexto }}, se procede a la suscripción de la presente <b>ACTA ENTREGA-RECEPCION</b>&nbsp;de bienes de Bodega Informática provisional CPE, donde actúa<b> {{ $accessUser->names . ' ' . $accessUser->surnames }}&nbsp;y&nbsp;{{ $user->names . ' ' . $user->surnames }}</b>&nbsp;&nbsp;&nbsp;como <b>{{ $user->position }} - {{ $user->unit }}</b>, de acuerdo a la siguiente acta:
     </p>
     <table id="tabla_listado">
         <thead>
@@ -143,7 +143,7 @@
     <div class="border">
         <p style="height: 100px;">
 
-            {{ is_null($itemAccessUser->observation)?'': $itemAccessUser->observation}}
+            {{ is_null($itemAccessUser->reason_return)?'': $itemAccessUser->reason_return}}
         </p>
     </div>
     <p style="font-size: 14pt;text-align: justify">Para constancia de lo actuado en fe de conformidad y aceptación, suscriben la presenta
@@ -167,20 +167,20 @@
             </tr>
             <tr>
                 <td class="text-center" width="50%">
+                    <div class="text-center">
+                        {{ $accessUser->names . ' ' . $accessUser->surnames }}<br>
+                        <b>{{ $accessUser->position }}<br>
+                            {{ $accessUser->unitAbbreviate }}<br>
+                            C.I.: {{ $accessUser->ci }}
+                        </b>
+                    </div>
+                </td>
+                <td class="text-center" width="50%">
                     <div class="text-center" style="text-transform: uppercase">
                         {{ $user->names . ' ' . $user->surnames }}<br>
                         <b>{{ $user->position }}<br>
                             {{ $user->unit }}<br>
                             C.I.: {{ $user->ci }}
-                        </b>
-                    </div>
-                </td>
-                <td class="text-center" width="50%">
-                    <div class="text-center">
-                        {{ $accessUser->names . ' ' . $accessUser->surnames }}<br>
-                        <b>{{ $accessUser->position }}<br>
-                            {{ $accessUser->unit }}<br>
-                            C.I.: {{ $accessUser->ci }}
                         </b>
                     </div>
                 </td>
